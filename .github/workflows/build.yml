@@ -1,0 +1,31 @@
+name: Build Revit 2023 Plugin
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: windows-latest  # Use Windows for Revit API compatibility
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up .NET 6.0
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.0.x  # Force .NET 6.0 instead of 8.0
+
+      - name: Verify .NET Version
+        run: dotnet --version  # Check if .NET 6.0 is active
+
+      - name: Restore NuGet Packages
+        run: dotnet restore
+
+      - name: Build Revit Plugin
+        run: dotnet build --configuration Release
+
+      - name: Upload DLL Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: Revit-Plugin-DLL
+          path: RevitPlugin/bin/Release/*.dll
